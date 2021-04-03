@@ -9,7 +9,7 @@ RUN wget https://github.com/yarnpkg/yarn/releases/download/v1.22.5/yarn_1.22.5_a
     # https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions
     && curl -sL https://deb.nodesource.com/setup_12.x | bash - \
     # Install packages
-    && apt-get update -qq && apt-get install -y nodejs postgresql-client
+    && apt-get update -qq && apt-get install -y nodejs postgresql-client shared-mime-info
 
 RUN mkdir /myapp
 WORKDIR /myapp
