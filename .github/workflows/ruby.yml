@@ -4,26 +4,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
     services:
-      postgres:
+      db:
         image: postgres:12.4
-        ports:
-          - 5432:5432
         env:
-          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
-          POSTGRES_DB: test
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    container:
+      image: ruby:2.6.6
+      env:
+        RAILS_ENV: test
+
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Ruby 2.6
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.6
-      - name: Build and test
-        env:
-          RAILS_ENV: test
+      - name: Set up
         run: |
-          sudo apt-get -yqq install libsqlite3-dev
+          wget https://github.com/yarnpkg/yarn/releases/download/v1.22.5/yarn_1.22.5_all.deb
+          dpkg -i yarn_1.22.5_all.deb
+          rm yarn_1.22.5_all.deb
+          curl -sL https://deb.nodesource.com/setup_12.x | bash -
+          apt-get update -qq && apt-get install -y nodejs postgresql-client shared-mime-info
+      - name: Build and test
+        run: |
           bundle install --jobs 4 --retry 3
           bin/rails db:create
           bin/rails db:migrate
