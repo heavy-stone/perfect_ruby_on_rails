@@ -21,7 +21,7 @@ jobs:
           dpkg -i yarn_1.22.5_all.deb
           rm yarn_1.22.5_all.deb
           curl -sL https://deb.nodesource.com/setup_12.x | bash -
-          apt-get update -qq && apt-get install -y nodejs postgresql-client shared-mime-info
+          apt-get update -qq && apt-get install -y nodejs postgresql-client shared-mime-info sudo
       - name: Configure sysctl limits
         run: |
           sudo swapoff -a
