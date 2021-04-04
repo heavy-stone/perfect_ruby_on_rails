@@ -1,0 +1,32 @@
+name: Rails Tests
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:12.4
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: test
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby 2.6
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - name: Build and test
+        env:
+          RAILS_ENV: test
+        run: |
+          sudo apt-get -yqq install libsqlite3-dev
+          bundle install --jobs 4 --retry 3
+          bin/rails db:create
+          bin/rails db:migrate
+          bin/yarn install
+          bin/rails test
+          bin/rails test:system
