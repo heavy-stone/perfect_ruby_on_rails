@@ -22,6 +22,18 @@ jobs:
           rm yarn_1.22.5_all.deb
           curl -sL https://deb.nodesource.com/setup_12.x | bash -
           apt-get update -qq && apt-get install -y nodejs postgresql-client shared-mime-info
+      - name: Configure sysctl limits
+        run: |
+          sudo swapoff -a
+          sudo sysctl -w vm.swappiness=1
+          sudo sysctl -w fs.file-max=262144
+          sudo sysctl -w vm.max_map_count=262144
+      - name: Run Elasticsearch
+        uses: heavy-stone/perfect_ruby_on_rails_elasticsearch_with_plugins_action@v1
+        with:
+          stack-version: 7.6.0
+          plugins: |
+            analysis-kuromoji
       - name: Build and test
         run: |
           bundle install --jobs 4 --retry 3
